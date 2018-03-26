@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="/css/same.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <script src='/js/vue.min.js'></script>
+  <script src='https://cdn.bootcss.com/jquery/3.3.1/jquery.js'></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/js/swiper.min.js"></script>
+</head>
+<body>
+  <section>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <div v-for='item in banners' class="swiper-slide">
+          <h3>{{item.title}}</h3>
+          <h5>{{item.description}}</h5>
+        </div>
+      </div>
+    </div>
+
+    <ul class='customBox'>
+      <li v-for='item in customs'>
+        <h3>{{item.title}}</h3>
+        <p>{{item.description}}</p>
+        <img :src="amendImg(item.src)" alt="">
+      </li>
+    </ul>
+  </section>
+  
+  <script>
+    new Vue({
+      el: 'section',
+      data: {
+        banners: [],
+        customs: []
+      },
+      mounted(){
+        this.init();
+      },
+      methods: {
+        init() {
+          $.get('/web/get_banner', (data)=>{
+            console.log(data);
+            this.banners = data;
+            this.$nextTick(()=>{
+              // swiper初始化
+              var mySwiper = new Swiper('.swiper-container', {
+                autoplay: true,//可选选项，自动滑动
+                loop: true
+              })
+            });
+            $.get('/web/get_custom', (data) => {
+              console.log(data);
+              this.customs = data;
+            });
+          });
+        },
+        amendImg(src){
+          return '/upload/' + src;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
